@@ -1,4 +1,4 @@
-package org.example.exceptionHandle;
+package exceptionHandle;
 
 public class ErrorResponse_3 {
     private int status;

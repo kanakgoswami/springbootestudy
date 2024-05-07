@@ -1,4 +1,4 @@
-package org.example.exceptionHandle;
+package exceptionHandle;
 
 public class Product_5 {
     private Long id;

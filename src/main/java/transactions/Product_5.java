@@ -1,4 +1,4 @@
-package org.example.transactions;
+package transactions;
 
 public class Product_5 {
     private Long id;

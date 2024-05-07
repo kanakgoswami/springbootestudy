@@ -1,4 +1,4 @@
-package org.example.transactions;
+package transactions;
 
 public class ErrorResponse_3 {
     private int status;

@@ -1,4 +1,4 @@
-package org.example.transactions;
+package transactions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
