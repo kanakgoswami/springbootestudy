@@ -1,4 +1,4 @@
-package exceptionHandle;
+package exceptionHandle.data.model;
 
 public class ErrorResponse_3 {
     private int status;

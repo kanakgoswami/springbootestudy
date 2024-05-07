@@ -1,5 +1,7 @@
-package exceptionHandle;
+package exceptionHandle.Handler;
 
+import exceptionHandle.Exception.ProductNotFoundException_1;
+import exceptionHandle.data.model.ErrorResponse_3;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

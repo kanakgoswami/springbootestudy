@@ -1,6 +1,7 @@
-package exceptionHandle;
+package exceptionHandle.data.model;
 
 public class Product_5 {
+
     private Long id;
 
     public Product_5() {
