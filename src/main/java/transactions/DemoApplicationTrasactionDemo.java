@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DemoApplicationTrasactionDemo {
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplicationTrasactionDemo.class, args);
-		System.out.println("demo");
+		System.out.println("DemoApplicationTrasactionDemo");
 	}
 }

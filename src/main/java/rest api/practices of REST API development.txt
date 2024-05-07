@@ -1,0 +1,229 @@
+https://www.capitalone.com/tech/software-engineering/10-microservices-best-practices/
+
+0. Swagger
+1. Using JSON as data format 
+2. Using nouns as end point names. For actions use HTTP methods because they are verbs like GET, PUT, POST 
+3. Using Plurals 
+4. Using nesting 
+5. Error handling 
+6. Filtering, sorting, paging 
+7. Versioning 
+8. Documentation 
+9. Using SSL/TLS
+
+10 Microservices Best Practices
+1. The Single Responsibility Principle
+Just like with code, where a class should have only a single reason to change, microservices should be modeled in a similar fashion. Building bloated services which are subject to change for more than one business context is a bad practice.
+Example: Let’s say you are building microservices for ordering a pizza. You can consider building the following components based on the functionality each supports like InventoryService, OrderService, PaymentsService, UserProfileService, DeliveryNotificationService, etc. InventoryService would only have APIs that fetch or update the inventory of pizza types or toppings, and likewise others would carry the APIs for their functionality. 
+
+2. Have a separate data store(s) for your microservice
+It defeats the purpose of having microservices if you are using a monolithic database that all your microservices share. Any change or downtime to that database would then impact all the microservices that use the database. Choose the right database for your microservice needs, customize the infrastructure and storage to the data that it maintains, and let it be exclusive to your microservice. Ideally, any other microservice that needs access to that data would only access it through the APIs that the microservice with write access has exposed. 
+
+3. Use asynchronous communication to achieve loose coupling
+To avoid building a mesh of tightly coupled components, consider using asynchronous communication between microservices. 
+a. Make calls to your dependencies asynchronously, example below. 
+Example: Let’s say you have a Service A that calls Service B. Once Service B returns a response, Service A returns success to the caller. If the caller is not interested in Service B’s output, then Service A can asynchronously invoke Service B and instantly respond with a success to the caller. 
+b. An even better option is to use events for communicating between microservices. Your microservice would publish an event to a message bus either indicating a state change or a failure and whichever microservice is interested in that event, would pick it up and process it. 
+Example: In the pizza order system above, sending a notification to the customer once their order is captured, or status messages as the order gets fulfilled and delivered, can happen using asynchronous communication. A notification service can listen to an event that an order has been submitted and process the notification to the customer.
+
+4. Fail fast by using a circuit breaker to achieve fault tolerance
+If your microservice is dependent on another system to provide a response, and that system takes forever to respond, your overall response SLAs will be impacted. To avoid this scenario and quickly respond, one simple microservices best practice you can follow is to use a circuit breaker to timeout the external call and return a default response or an error. The Circuit Breaker pattern is explained in the references below. This will isolate the failing services that your service is dependent on without causing cascade failures, keeping your microservice in good health. You can choose to use popular products like Hystrix that Netflix developed. This is better than using the HTTP CONNECT_TIMEOUT and READ_TIMEOUT settings as it does not spin up additional threads beyond what’s been configured.
+
+5. Proxy your microservice requests through an API Gateway
+Instead of every microservice in the system performing the functions of API authentication, request / response logging, and throttling, having an API gateway doing these for you upfront will add a lot of value. Clients calling your microservices will connect to the API Gateway instead of directly calling your service. This way you will avoid making all those additional calls from your microservice and the internal URLs of your service would be hidden, giving you the flexibility to redirect the traffic from the API Gateway to a newer version of your service. This is even more necessary when a third party is accessing your service, as you can throttle the incoming traffic and reject unauthorized requests from the API gateway before they reach your microservice. You can also choose to have a separate API gateway that accepts traffic from external networks. 
+
+6. Ensure your API changes are backwards compatible
+You can safely introduce changes to your API and release them fast as long as they don’t break existing callers. One possible option is to notify your callers , have them provide a sign off for your changes by doing integration testing. However, this is expensive, as all the dependencies need to line up in an environment and it will slow you down with a lot of coordination . A better option is to adopt contract testing for your APIs. The consumers of your APIs provide contracts on their expected response from your API. You as a provider  would integrate those contract tests as part of your builds and these will safeguard against breaking changes. The consumer can test against the stubs that you publish as part of the consumer builds. This way you can go to production faster with independently testing your contract changes.
+
+7. Version your microservices for breaking changes
+It's not always possible to make backwards compatible changes. When you are making a breaking change, expose a new version of your endpoint while continuing to support older versions. Consumers can choose to use the new version at their convenience. However, having too many versions of your API can create a nightmare for those maintaining the code. Hence, have a disciplined approach to deprecate older versions by working with your clients or internally rerouting the traffic to the newer versions.
+
+8. Have dedicated infrastructure hosting your microservice
+You can have the best designed microservice meeting all the checks, but with a bad design of the hosting platform it would still behave poorly. Isolate your microservice infrastructure from other components to get fault isolation and best performance. It is also important to isolate the infrastructure of the components that your microservice depends on.
+Example: In the pizza order example above, let's say the inventory microservice uses an inventory database. It is not only important for the Inventory Service to have dedicated host machines, but also the inventory database needs to have dedicated host machines.
+
+9. Create a separate release train
+Your microservice needs to have its own separate release vehicle which is not tied to other components within your organization. This way you are not stepping on each other’s toes and wasting time coordinating with multiple teams.
+10. Create Organizational Efficiencies
+While microservices give you the freedom to develop and release independently, certain standards need to be followed for cross cutting concerns so that every team doesn’t spend time creating unique solutions for these. This is very important in a distributed architecture such as microservices, where you need to be able to connect all the pieces of the puzzle to see a holistic picture. Hence, enterprise solutions are necessary for API security, log aggregation, monitoring, API documentation, secrets management, config management, distributed tracing, etc. 
+
+Microservices Best Practices
+With that quick overview of the benefits and challenges of microservices, let’s now dive into some best practices. These best practices will help you create a robust, easy-to-manage, scalable, and secure system of intercommunicating microservices.
+
+1. Small Application Domain
+Adopting a microservices strategy requires embracing the single responsibility principle. By limiting the scope of responsibility for any single service, we limit the negative impact of that service failing. If a single microservice is responsible for too much, its failure or unavailability will have a domino effect on the rest of the system. 
+A microservice should be just that: micro. Keep the app domain of your microservices small, dedicated to one logical functionality. This will reduce the impact that a given microservice has if any issues arise. In addition, smaller services are simpler to maintain. The result is easier updating and faster development.
+What does this look like in practice? For example, let's assume that our microservice is an API server that accepts requests to fetch data, and an authorization token must accompany those requests. When you're just starting, this is the only microservice that requires an authorization token. Why not just make authentication and token generation part of the microservice? At first glance, the advantage is fewer moving parts, less to manage.
+Of course, there will come a day when you'll have other services that require an authorization token. You'll soon find your original microservice functioning as an API server and an authentication server. If your API server goes down, then your authentication server goes down with it. With that, so does every other service that requires an authorization token.
+Be considerate of your future self: keep your microservices small.
+
+2. Separation of Data Storage
+Multiple microservices connecting to the same database are still, in essence, a monolithic architecture. The monolith is just at the database layer instead of the application layer, making it just as fragile. Each microservice should have, as much as possible, its own data persistence layer. This not only ensures isolation from other microservices but also minimizes the blast radius if that particular data set were to become unavailable.
+At times, it might seem to make sense for different microservices to access data in the same database. However, a deeper examination might reveal that one microservice only works with a subset of database tables, while the other microservice only works with a completely different subset of tables. If the two subsets of data are completely orthogonal, this would be a good case for separating the database into separate services. This way, a single service depends on its dedicated data store, and that data store's failure will not impact any service besides that one.
+We could make an analogous case for file stores. When adopting a microservices architecture, there's no requirement for separate microservices to use the same file storage service. Unless there's an actual overlap of files, separate microservices ought to have separate file stores.
+With this separation of data comes an increase in flexibility. For example, let's assume we had two microservices, both sharing the same file storage service with a cloud provider. One microservice regularly touches numerous assets but is small in file size. The other microservice has only a few files that it touches periodically, but those files are hundreds of gigabytes in size.
+Using a common file store service for both microservices makes you less flexible to optimize costs since you have a mix of large and small files and a mix of regular and periodic access. If each microservice had its own data persistence layer—and that could be a separate microservice, of course—then you’d have more flexibility to find the provider or service that best fits the needs of that individual microservice.
+Cost optimization, the flexibility of options, and less dependence on a single solution that could fail—these are all reasons to separate the data of different microservices.
+
+3. Communication Channels
+How microservices communicate with one another—in particular, regarding events of interest—requires thoughtful consideration. Otherwise, a single unavailable service can lead to a communication breakdown that collapses an entire application.
+Imagine a system of microservices for an online store. One microservice takes orders placed by a website. Another microservice sends a text notification to the customer that it received their order. Another microservice notifies the warehouse to send out the product. Finally, another microservice updates inventory counts.
+There are two types of communication between microservices: synchronous and asynchronous. If we approach the above example using synchronous communication, a web server might process a new order by first sending a request to the customer notification service. After the customer notification service responds, the web server sends a request to the warehouse notification service, and again it waits for a response. Last, the web server sends a request to the inventory updater. Our synchronous approach would look like this:
+ 
+Synchronous communication between microservices
+Of course, suppose the customer notification service happened to be down. In that case, the request to notify the customer might timeout or return an error or perhaps leave the web server waiting for a response indefinitely. The warehouse notification service might never get the request to fulfill the shipment. Synchronous communication between microservices can create a dependency chain that breaks if any link in the chain breaks.
+In asynchronous communication, a service sends a request and continues its life without waiting for a response. In one possible asynchronous approach, the web server might send the "notify customer" request and then complete its task. The customer notification service is responsible for notifying the customer and sending an asynchronous request to the warehouse notification service, which is responsible for sending a request to the inventory updater service. It might look like this:
+ 
+Chained asynchronous communication between microservices
+In this model, of course, we see that asynchronous communication can still result in a chain dependency, and the failure of a single service would still disrupt the application.
+A simple but effective approach to asynchronous communication is to adopt the publish/subscribe pattern. When an event of interest occurs, the producer—in this case, the microservice—publishes a record of that event to a message queue service. Any other microservices interested in that type of event subscribe to the message queue service as consumers of that event. Microservices only talk to and listen to the message queue service, not each other.
+For our example, it might look like this:
+ 
+Asynchronous communication facilitated by a message queue service
+The message queue is a separate service of its own, decoupled from all of the microservices. It is in charge of receiving published events and notifying subscribers of those events. This ensures that the failure of one microservice, which might mean delayed delivery of a message, has minimal impact on other related but unconcerned services.
+There are many tools to accomplish this kind of asynchronous communication (for example, Kafka or RabbitMQ). Look for ways to integrate tools like these as asynchronous communication backbones for your microservices.
+There are cases when synchronous communication between microservices is necessary. Most request-response interactions are, out of necessity, synchronous. For example, an API server querying a database must wait for the query response; a web server fetching cached data must wait for the key-value store to respond. 
+When synchronous communication is needed, you’ll want to use the open source Kong Gateway to ensure that your communication is routed quickly and reliably to the right microservices.
+
+4. Compatibility
+As much as possible, maintain backward compatibility, so your consumers don’t encounter broken APIs. The popular way to do this is by following path level compatibility guarantees like /api/v1 or /api/v2. Any backward-incompatible changes go to a new path like /api/v3. 
+However, despite our best efforts as software engineers, sometimes we need to deprecate APIs, so we’re not stuck running them forever. With the API gateway request transformation plugin, your microservices can alert your API consumers by easily injecting deprecation notices alongside the original API response or attaching a “deprecation header” similar to Kubernetes.
+
+5. Orchestrating Microservices
+Orchestration of your microservices is a key factor of success in both process and tooling. Technically, you could use something like systemd and Docker or podman to run containers on a virtual machine, but that doesn’t provide the same level of resiliency as a container orchestration platform. This negatively affects the uptime and availability benefits that come with adopting a microservices architecture. For effective microservice orchestration, you’ll want to rely on a battle-tested container orchestration platform; and the clear leader in that field is Kubernetes.
+Kubernetes manages all of your containers’ provisioning and deployment while handling load balancing, scaling, replica sets for high availability, and network communication concerns.
+You might deploy bare Kubernetes on-premises, or you might go with a cloud distribution like Azure Kubernetes Service, Red Hat OpenShift, or Amazon Elastic Kubernetes Service. The built-in scheduling, replication, and networking capabilities of Kubernetes make microservice orchestration much easier than on a traditional operating system. 
+Couple Kubernetes with Kuma service mesh and Kong Ingress Controller, and you have microservices that are discoverable, monitored, and resilient—like magic.
+
+6. Microservices Security
+As your application comprises more and more microservices, ensuring proper security can become a complicated beast. A centralized system for enforcing security policies is vital to protecting your overall application from malicious users, invasive bots, and faulty code. Kong ought to be the start of your security story with microservices, whether you’re running on VMs or in Kubernetes. The abundance of Kong-maintained security plugins makes it easy to address some of the most common needs for microservices, including authentication, authorization, traffic control, and rate limiting.
+Example: Rate Limiting with Kong Ingress Controller
+To demonstrate an example of a security plugin at work, we'll deploy Kong's Rate Limiting plugin to show how Kong can prevent excessive inbound requests to your applications. We'll create a local Kubernetes cluster with kind and then deploy the Kong Ingress Controller by following these instructions.
+After creating a cluster and deploying the Kong Ingress Controller, our first step is to set up the Rate Limiting plugin. There are different scopes for which you can set up the plugin. We’ll use the default project on our Kubernetes cluster for our use case and scope the plugin to that default namespace.
+Plain Text
+1
+$ echo 'apiVersion: configuration.konghq.com/v1
+2
+kind: KongPlugin
+3
+metadata:
+4
+  name: rate-limiting-example
+5
+  namespace: default
+6
+config:
+7
+  second: 5
+8
+  hour: 10000
+9
+  policy: local
+10
+plugin: rate-limiting' | kubectl apply -f -
+11
+kongplugin.configuration.konghq.com/rate-limiting-example created
+
+Now, we’ll create an “echo service” and an ingress for the service. In this case, we’re borrowing the example from Kong’s Getting Started with Kubernetes Ingress Controller documentation:
+Plain Text
+1
+$ kubectl apply -f https://bit.ly/echo-service
+2
+service/echo created
+3
+deployment.apps/echo created
+
+Plain Text
+1
+$ echo "
+2
+apiVersion: extensions/v1beta1
+3
+kind: Ingress
+4
+metadata:
+5
+  name: demo
+6
+  annotations:
+7
+    kubernetes.io/ingress.class: kong
+8
+
+9
+    konghq.com/plugins: rate-limiting-example
+10
+spec:
+11
+  rules:
+12
+    - http:
+13
+      paths:
+14
+        - path: /foo
+15
+        backend:
+16
+          serviceName: echo
+17
+          servicePort: 80
+18
+" | kubectl apply -f -
+
+The last thing we need to do is test! We’ll borrow the shell-demo from the Kubernetes documentation for in-cluster testing:
+Plain Text
+1
+$ kubectl apply -f https://k8s.io/examples/application/shell-demo.yaml -n default
+
+Before getting into our shell pod, we’ll need the cluster IP of kong-proxy:
+Plain Text
+1
+$ kubectl get svc/kong-proxy -n kong -o jsonpath='{.spec.clusterIP}'
+2
+10.96.74.69
+
+Now, we can get shell access to our pod and test the rate limiting:
+Plain Text
+1
+$ kubectl exec --stdin --tty shell-demo -- /bin/bash
+2
+# curl -I 10.96.74.69/foo 
+3
+HTTP/1.1 200 OK 
+4
+Content-Type: text/plain; charset=UTF-8 
+5
+Connection: keep-alive 
+6
+X-RateLimit-Limit-Second: 5 
+7
+X-RateLimit-Remaining-Hour: 9998 
+8
+X-RateLimit-Limit-Hour: 10000 
+9
+RateLimit-Reset: 1 
+10
+RateLimit-Remaining: 4 
+11
+RateLimit-Limit: 5 
+12
+X-RateLimit-Remaining-Second: 4 
+13
+Date: Sat, 24 Jul 2021 20:01:35 GMT 
+14
+Server: echoserver 
+15
+X-Kong-Upstream-Latency: 0
+16
+X-Kong-Proxy-Latency: 0 
+17
+Via: kong/2.4.1
+
+The additional step of using an intermediary pod to test the rate limiting won’t be necessary for most cloud providers, which gives you a load balancer out of the box. In this case, since we’re using kind, there’s no load balancer provisioned, so our test comes from within the cluster. This same test would work externally if a load balancer were available.
+Rate limiting is just one example of where Kong fits into the security concerns of your overall microservices strategy and best practices but can easily provide a fully comprehensive solution. Kong maintains several plugins and products to keep your communication channels bulletproof, API change impact minimal, and your application domains manageable. Plus, it's compatible with most programming languages and vendor options.
+7. Metrics and Monitoring
+An architecture built on microservices can lead to massive scaling of hundreds or thousands of small, modular services. While that yields huge potential for increased speed, availability, and reach, a sprawling system of microservices requires a strategic and systematic approach to monitoring. By keeping an eye on all of your microservices, you'll ensure that they are functioning as they ought to, are available to your users, and are using resources appropriately. When any of these expectations are not met, you can respond by taking proper action.
+Fortunately, you don't need to reinvent the wheel when it comes to monitoring. There are several widely adopted monitoring solutions that can integrate seamlessly within your infrastructure. Some solutions use metrics exporter SDKs which can be integrated by adding one or two lines of code in your microservice. Others can be integrated with your API gateway or service mesh as a plugin, for monitoring networking concerns and resource usage.
+
+

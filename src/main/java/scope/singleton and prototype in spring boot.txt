@@ -1,0 +1,30 @@
+In Spring Boot, the concepts of singleton and prototype are related to the scope of a bean. Let's take a look at what each scope means:
+
+1. **Singleton**: The singleton scope is the default scope in Spring Boot. When a bean is defined as a singleton, Spring creates a single instance of that bean and shares it with all the dependent classes. This means that every time a bean of singleton scope is injected into another bean, the same instance is used. The singleton scope is suitable for stateless beans or beans that can be safely shared among multiple components.
+
+To define a bean as a singleton explicitly, you can use the `@Scope("singleton")` annotation on the bean declaration, but it is not necessary as singleton is the default scope.
+
+Example:
+```java
+@Component
+public class MySingletonBean {
+    // Bean implementation
+}
+```
+
+2. **Prototype**: The prototype scope in Spring Boot means that a new instance of the bean is created every time it is requested. Each time a bean of prototype scope is injected or retrieved from the application context, a new instance is created. This allows for more control over the lifecycle of the bean and ensures that each dependent component gets its own separate instance.
+
+To define a bean as a prototype, you can use the `@Scope("prototype")` annotation on the bean declaration.
+
+Example:
+```java
+@Component
+@Scope("prototype")
+public class MyPrototypeBean {
+    // Bean implementation
+}
+```
+
+It's worth noting that the choice of scope depends on your specific use case and requirements. Singleton beans are generally more efficient in terms of memory usage, as they are shared among components, whereas prototype beans allow for better isolation and can be useful when you need a new instance each time the bean is accessed.
+
+Additionally, Spring Boot supports other scopes such as request, session, and application, which are typically used in web applications to manage the lifecycle of beans based on the HTTP request or session context.

@@ -1,0 +1,85 @@
+In Java, Jackson is a popular library for working with JSON data. It provides efficient methods for both marshalling (serialization) and unmarshalling (deserialization) JSON data. Marshalling is the process of converting Java objects to JSON, while unmarshalling is the process of converting JSON to Java objects.
+
+To use Jackson for marshalling and unmarshalling JSON data in Java, you need to include the Jackson libraries in your project. Jackson provides two main classes for this purpose: `ObjectMapper` and `JsonNode`.
+
+Here's an example of how to perform marshalling and unmarshalling using Jackson in Java:
+
+1. Marshalling (Java object to JSON):
+
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class MarshallingExample {
+    public static void main(String[] args) {
+        // Create an instance of ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Create a Java object
+        Person person = new Person("John Doe", 30);
+
+        try {
+            // Convert Java object to JSON string
+            String json = objectMapper.writeValueAsString(person);
+            System.out.println(json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Sample Java class
+    static class Person {
+        private String name;
+        private int age;
+
+        public Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        // Getters and setters (or public fields) omitted for brevity
+    }
+}
+```
+
+In the above example, we create an instance of `ObjectMapper` and call its `writeValueAsString()` method to convert the `Person` object to a JSON string.
+
+2. Unmarshalling (JSON to Java object):
+
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class UnmarshallingExample {
+    public static void main(String[] args) {
+        // Create an instance of ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // JSON string to be converted
+        String json = "{\"name\":\"John Doe\",\"age\":30}";
+
+        try {
+            // Convert JSON string to Java object
+            Person person = objectMapper.readValue(json, Person.class);
+            System.out.println(person.getName());
+            System.out.println(person.getAge());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Sample Java class
+    static class Person {
+        private String name;
+        private int age;
+
+        // Default constructor required for Jackson
+        public Person() {
+        }
+
+        // Getters and setters (or public fields) omitted for brevity
+    }
+}
+```
+
+In the above example, we create an instance of `ObjectMapper` and call its `readValue()` method to convert the JSON string to a `Person` object.
+
+Remember to include the necessary Jackson libraries in your project's dependencies to use the `ObjectMapper` class.

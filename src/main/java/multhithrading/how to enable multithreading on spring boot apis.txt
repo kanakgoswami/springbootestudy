@@ -1,0 +1,79 @@
+Enabling multithreading on Spring Boot APIs can be achieved by configuring the appropriate components and settings. Here's a step-by-step guide on how to enable multithreading in a Spring Boot application:
+
+1. Configuration:
+   - Open your Spring Boot application's configuration file (e.g., `application.properties` or `application.yml`).
+   - Add or modify the following properties:
+
+     ```properties
+     # For application.properties
+     server.tomcat.max-threads=200
+
+     # For application.yml
+     server:
+       tomcat:
+         max-threads: 200
+     ```
+
+   - The `max-threads` property determines the maximum number of threads that can be used by the server for handling requests. Adjust the value according to your requirements.
+
+2. Controller Level Configuration:
+   - If you want to customize multithreading settings for specific API endpoints, you can use Spring's `@Async` annotation.
+   - Annotate the relevant controller method(s) with `@Async` to indicate that they should be executed asynchronously in separate threads.
+   - Make sure to enable asynchronous processing in the Spring application configuration by adding the `@EnableAsync` annotation to one of your configuration classes or the main application class.
+
+     ```java
+     import org.springframework.scheduling.annotation.Async;
+     import org.springframework.stereotype.Controller;
+     import org.springframework.web.bind.annotation.GetMapping;
+     import org.springframework.web.bind.annotation.ResponseBody;
+     import org.springframework.scheduling.annotation.EnableAsync;
+
+     @Controller
+     @EnableAsync
+     public class MyController {
+     
+         @GetMapping("/my-api")
+         @ResponseBody
+         @Async
+         public String myApiMethod() {
+             // Method logic to be executed asynchronously
+             return "Response from async API method";
+         }
+     }
+     ```
+
+3. Thread Pool Configuration (Optional):
+   - If you want to customize the thread pool used for executing asynchronous tasks, you can define a custom `TaskExecutor` bean in your configuration.
+   - Create a bean of type `ThreadPoolTaskExecutor` and configure its properties according to your needs.
+
+     ```java
+     import org.springframework.context.annotation.Bean;
+     import org.springframework.context.annotation.Configuration;
+     import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+     @Configuration
+     public class AsyncConfiguration {
+
+         @Bean(name = "myTaskExecutor")
+         public ThreadPoolTaskExecutor myTaskExecutor() {
+             ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+             executor.setCorePoolSize(10);
+             executor.setMaxPoolSize(50);
+             executor.setThreadNamePrefix("my-executor-");
+             // Configure other properties as required
+             return executor;
+         }
+     }
+     ```
+
+   - Use the custom task executor by specifying its name in the `@Async` annotation on the controller method.
+
+     ```java
+     @Async("myTaskExecutor")
+     public String myApiMethod() {
+         // Method logic to be executed asynchronously using the custom task executor
+         return "Response from async API method";
+     }
+     ```
+
+Enabling multithreading in Spring Boot allows your application to handle requests concurrently, potentially improving performance and responsiveness. However, it's important to carefully manage thread usage and ensure thread-safety in your code to avoid potential issues like race conditions or resource contention.

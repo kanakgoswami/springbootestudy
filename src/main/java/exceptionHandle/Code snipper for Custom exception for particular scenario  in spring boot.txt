@@ -1,0 +1,41 @@
+Sure! Here's an example of how you can create a custom exception for a specific scenario in a Spring Boot application:
+
+```java
+// CustomException.java
+public class CustomException extends RuntimeException {
+    public CustomException(String message) {
+        super(message);
+    }
+}
+
+// CustomExceptionAdvice.java
+@ControllerAdvice
+public class CustomExceptionAdvice {
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<String> handleCustomException(CustomException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+}
+
+// YourController.java
+@RestController
+public class YourController {
+    @GetMapping("/your-endpoint")
+    public void yourMethod() {
+        // Check for your specific scenario
+        if (/* your specific condition */) {
+            throw new CustomException("Custom exception message");
+        }
+
+        // Your code logic if the condition is not met
+    }
+}
+```
+
+In the above code snippet, we have created a `CustomException` class that extends the `RuntimeException` class. This exception is thrown when a specific condition is met in your `YourController` class.
+
+We also have a `CustomExceptionAdvice` class annotated with `@ControllerAdvice`, which allows us to handle the `CustomException` globally. In this class, we have defined a method annotated with `@ExceptionHandler` that specifically handles the `CustomException` and returns a custom response with a status of `BAD_REQUEST` and the exception message.
+
+Finally, in your `YourController` class, you can throw the `CustomException` when your specific condition is met, and it will be caught and handled by the `CustomExceptionAdvice` class.
+
+Please note that you might need to customize the code according to your specific scenario and requirements.

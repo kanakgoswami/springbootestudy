@@ -1,0 +1,74 @@
+In Spring Boot, you can set the HTTP status code for a response using various mechanisms. Here are some ways to handle and set the HTTP status code in Spring Boot:
+
+1. **Using ResponseEntity**: ResponseEntity is a class provided by Spring that represents an HTTP response. You can use it to set the desired status code along with the response body. Here's an example:
+
+   ```java
+   import org.springframework.http.HttpStatus;
+   import org.springframework.http.ResponseEntity;
+   import org.springframework.web.bind.annotation.GetMapping;
+   import org.springframework.web.bind.annotation.RestController;
+
+   @RestController
+   public class MyController {
+
+       @GetMapping("/myendpoint")
+       public ResponseEntity<String> myEndpoint() {
+           // Your business logic
+
+           if (condition) {
+               return ResponseEntity.ok("Success");
+           } else {
+               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
+           }
+       }
+   }
+   ```
+
+   In the example above, the `/myendpoint` endpoint returns an HTTP 200 OK status code if the condition is true. Otherwise, it returns an HTTP 400 BAD REQUEST status code along with an error message.
+
+2. **Using @ResponseStatus**: You can use the `@ResponseStatus` annotation at the method or class level to set a specific HTTP status code for all responses. Here's an example:
+
+   ```java
+   import org.springframework.http.HttpStatus;
+   import org.springframework.web.bind.annotation.GetMapping;
+   import org.springframework.web.bind.annotation.ResponseStatus;
+   import org.springframework.web.bind.annotation.RestController;
+
+   @RestController
+   public class MyController {
+
+       @GetMapping("/myendpoint")
+       @ResponseStatus(HttpStatus.CREATED)
+       public String myEndpoint() {
+           // Your business logic
+
+           return "Created";
+       }
+   }
+   ```
+
+   In this example, the `/myendpoint` endpoint always returns an HTTP 201 CREATED status code.
+
+3. **Using HttpServletResponse**: If you have access to the `HttpServletResponse` object, you can directly set the status code using its `setStatus()` method. Here's an example:
+
+   ```java
+   import javax.servlet.http.HttpServletResponse;
+   import org.springframework.web.bind.annotation.GetMapping;
+   import org.springframework.web.bind.annotation.RestController;
+
+   @RestController
+   public class MyController {
+
+       @GetMapping("/myendpoint")
+       public String myEndpoint(HttpServletResponse response) {
+           // Your business logic
+
+           response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+           return "Not Found";
+       }
+   }
+   ```
+
+   In this example, the `/myendpoint` endpoint sets an HTTP 404 NOT FOUND status code using the `setStatus()` method of `HttpServletResponse`.
+
+These are some of the common ways to set HTTP status codes in Spring Boot. Choose the approach that best suits your application's requirements and coding style.

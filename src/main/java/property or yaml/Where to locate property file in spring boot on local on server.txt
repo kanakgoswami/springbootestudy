@@ -1,0 +1,23 @@
+In a Spring Boot application, you can store property files in different locations depending on whether you are running the application locally or on a server. Here are the common locations for property files in both scenarios:
+
+1. Local Development:
+   - The `src/main/resources` directory: In a standard Spring Boot project structure, the `src/main/resources` directory is the default location for storing property files. You can place your property files directly in this directory or create subdirectories if needed.
+
+2. Server Deployment:
+   - External directory: When deploying a Spring Boot application on a server, you may choose to store the property files outside the application's packaged JAR or WAR file. You can specify the external directory location using the `spring.config.name` and `spring.config.location` properties. For example, you can pass these properties as command-line arguments or set them as environment variables when starting the application.
+   ```
+   java -jar myapp.jar --spring.config.name=myconfig --spring.config.location=/path/to/config/
+   ```
+   This allows you to provide different property files for different environments or easily modify the configurations without redeploying the application.
+
+   - Classpath directory: Alternatively, you can include the property files inside the packaged JAR or WAR file and place them in a specific directory within the classpath. By default, Spring Boot loads property files from the root of the classpath, so you can put your property files in a directory like `config/` inside the JAR or WAR file. Then, you can use the `spring.config.name` property to specify the name of the property file(s) to be loaded.
+   ```
+   java -jar myapp.jar --spring.config.name=myconfig
+   ```
+   This approach keeps the property files bundled with the application and allows for easy distribution and deployment.
+
+It's important to note that Spring Boot provides automatic configuration loading, which means it looks for property files with predefined names like `application.properties` or `application.yml` in the above-mentioned locations. You can also customize the names of the property files using the `spring.config.name` property.
+
+Additionally, you can use different profiles (e.g., `development`, `production`, `test`) to load specific property files based on the active profile. In this case, you can use names like `application-{profile}.properties` or `application-{profile}.yml` for the property files.
+
+By following these practices, you can manage property files effectively in both local development and server deployment scenarios.

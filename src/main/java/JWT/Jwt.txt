@@ -1,0 +1,17 @@
+JWT stands for JSON Web Token. It is an open standard (RFC 7519) for securely transmitting information between parties as a JSON object. JWTs are often used for authentication and authorization purposes in web applications and APIs.
+
+A JWT consists of three parts: a header, a payload, and a signature. 
+
+1. Header: The header typically contains information about the type of token (JWT) and the signing algorithm used.
+
+2. Payload: The payload contains the claims, which are statements about an entity (typically the user) and additional data. Claims can include information such as the user's identity, roles, permissions, and other relevant data. There are three types of claims: registered claims, public claims, and private claims. Registered claims include commonly used claims defined by the JWT standard, while public claims are defined by the application. Private claims are custom claims created for specific use within an application.
+
+3. Signature: The signature is created by combining the encoded header, encoded payload, a secret key, and applying a cryptographic algorithm. The signature ensures the integrity and authenticity of the token. When receiving a JWT, the recipient can verify the signature using the secret key to ensure that the token has not been tampered with.
+
+JWTs are self-contained, meaning that all the necessary information to verify the token is contained within it. This eliminates the need for the recipient to query a database or make additional network requests to validate the token.
+
+One of the main advantages of using JWTs for authentication is their statelessness. Since the token carries all the necessary information, the server does not need to store session state. This simplifies the architecture and enables scalability in distributed systems.
+
+When a user logs in or authenticates, the server generates a JWT and sends it back to the client. The client includes the JWT in subsequent requests as an authorization header or within the request payload. The server can then validate the JWT, extract the necessary information from the payload, and make authorization decisions based on the claims present in the token.
+
+JWTs can be used across different domains and platforms, making them a flexible and widely adopted solution for secure authentication and authorization in modern web applications and APIs.

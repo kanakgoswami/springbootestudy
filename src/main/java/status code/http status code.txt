@@ -1,0 +1,38 @@
+HTTP status codes are standardized codes that are used to indicate the result of an HTTP request. They provide information about the success, failure, or other conditions of the request-response cycle. Here are some of the commonly used HTTP status codes:
+
+1. **1xx Informational**: These status codes indicate that the request has been received and the server is continuing with the process.
+
+   - 100 - Continue
+   - 101 - Switching Protocols
+   - 102 - Processing
+
+2. **2xx Success**: These status codes indicate that the request was successfully received, understood, and processed by the server.
+
+   - 200 - OK
+   - 201 - Created
+   - 202 - Accepted
+   - 204 - No Content
+
+3. **3xx Redirection**: These status codes indicate that further action needs to be taken by the client to complete the request.
+
+   - 301 - Moved Permanently
+   - 302 - Found
+   - 304 - Not Modified
+   - 307 - Temporary Redirect
+
+4. **4xx Client Errors**: These status codes indicate that the client's request contains incorrect syntax or cannot be fulfilled.
+
+   - 400 - Bad Request
+   - 401 - Unauthorized
+   - 403 - Forbidden
+   - 404 - Not Found
+   - 405 - Method Not Allowed
+
+5. **5xx Server Errors**: These status codes indicate that the server encountered an error while processing the request.
+
+   - 500 - Internal Server Error
+   - 502 - Bad Gateway
+   - 503 - Service Unavailable
+   - 504 - Gateway Timeout
+
+These are just a few examples of the commonly used HTTP status codes. There are many more status codes defined by the HTTP specification. The appropriate status code to use depends on the specific situation and the semantics of the request and response. When developing RESTful APIs or web applications in Spring Boot, it is important to use the correct HTTP status codes to provide meaningful information to clients.

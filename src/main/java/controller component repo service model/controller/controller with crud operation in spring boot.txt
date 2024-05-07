@@ -1,0 +1,95 @@
+Sure! I can provide you with an example of a Spring Boot controller that performs CRUD (Create, Read, Update, Delete) operations. In this example, we'll create a controller for managing a simple entity called "User." 
+
+First, let's define the User entity class:
+
+```java
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+
+    // Constructors, getters, and setters
+}
+```
+
+Next, we'll create the controller class that handles the CRUD operations:
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> existingUser = userRepository.findById(id);
+        if (existingUser.isPresent()) {
+            user.setId(id);
+            User updatedUser = userRepository.save(user);
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+
+In this example, we use the `UserRepository` interface, which is responsible for the CRUD operations on the `User` entity. The repository interface can be created by extending the `JpaRepository` interface provided by Spring Data JPA.
+
+Make sure to configure the database connection and Spring Data JPA in your project, including setting up the appropriate database properties in the `application.properties` file.
+
+By defining this controller, you can now perform CRUD operations on the `/users` endpoint, such as:
+
+- GET `/users`: Retrieve all users
+- GET `/users/{id}`: Retrieve a user by ID
+- POST `/users`: Create a new user
+- PUT `/users/{id}`: Update an existing user
+- DELETE `/users/{id}`: Delete a user by ID
+
+Remember to adjust the code according to your specific requirements and ensure that the necessary dependencies are added to your project.

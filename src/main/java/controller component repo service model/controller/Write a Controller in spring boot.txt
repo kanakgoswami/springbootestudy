@@ -1,0 +1,32 @@
+Sure! Here's an example of a simple controller in Spring Boot:
+
+```java
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class MyController {
+  
+  @GetMapping("/hello")
+  public String hello() {
+    return "Hello, World!";
+  }
+  
+  @PostMapping("/greet")
+  public String greet(@RequestBody String name) {
+    return "Hello, " + name + "!";
+  }
+}
+```
+
+In the above example, we have created a `MyController` class annotated with `@RestController`, which indicates that this class will handle HTTP requests and return the response as the HTTP response. The `@RequestMapping` annotation specifies the base URL mapping for all the endpoints in this controller.
+
+The `hello()` method is annotated with `@GetMapping("/hello")`, which means it will handle HTTP GET requests to the "/api/hello" URL. It simply returns the string "Hello, World!" as the response.
+
+The `greet()` method is annotated with `@PostMapping("/greet")`, indicating that it will handle HTTP POST requests to the "/api/greet" URL. It takes a request body parameter `name` using the `@RequestBody` annotation and concatenates it with the greeting message "Hello, " to form the response.
+
+You can define more methods in your controller class to handle different endpoints and operations based on your requirements. Remember to include the necessary dependencies in your Spring Boot project, such as `spring-boot-starter-web`, to enable the web application and run the controller.

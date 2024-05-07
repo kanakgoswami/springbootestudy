@@ -1,0 +1,58 @@
+In Spring Boot, the Object Mapper is a utility class provided by the Jackson library, which is the default JSON (de)serialization library used in Spring. The Object Mapper allows you to convert Java objects to JSON (serialization) and JSON back to Java objects (deserialization).
+
+Here's how you can use the Object Mapper in a Spring Boot application:
+
+1. Dependency: Include the Jackson dependency in your `pom.xml` file or build.gradle file. Spring Boot automatically includes the necessary Jackson dependencies, so you don't need to explicitly add them.
+
+2. Configuration: By default, Spring Boot auto-configures an instance of the Object Mapper called `Jackson2ObjectMapperBuilder`. You can customize the configuration of the Object Mapper by defining a bean of type `Jackson2ObjectMapperBuilderCustomizer` in your application's configuration.
+
+   ```java
+   import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+
+   @Configuration
+   public class JacksonConfig {
+
+       @Bean
+       public Jackson2ObjectMapperBuilderCustomizer objectMapperBuilderCustomizer() {
+           return builder -> {
+               // Customize the Object Mapper configuration if needed
+               // For example, enable/disable features or set date format
+           };
+       }
+   }
+   ```
+
+3. Usage: Inject the Object Mapper (`com.fasterxml.jackson.databind.ObjectMapper`) wherever you need to perform JSON serialization or deserialization.
+
+   ```java
+   import com.fasterxml.jackson.databind.ObjectMapper;
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.stereotype.Service;
+
+   @Service
+   public class MyService {
+
+       private final ObjectMapper objectMapper;
+
+       @Autowired
+       public MyService(ObjectMapper objectMapper) {
+           this.objectMapper = objectMapper;
+       }
+
+       public String serializeToJson(Object object) throws JsonProcessingException {
+           return objectMapper.writeValueAsString(object);
+       }
+
+       public <T> T deserializeFromJson(String json, Class<T> valueType) throws JsonProcessingException {
+           return objectMapper.readValue(json, valueType);
+       }
+   }
+   ```
+
+   In the above example, the `serializeToJson()` method serializes a Java object to JSON, and the `deserializeFromJson()` method deserializes JSON back to a Java object.
+
+The Object Mapper provides many customization options, such as handling of date/time formats, handling of null values, ignoring specific fields, and more. You can explore the Jackson documentation to learn more about the features and customization options provided by the Object Mapper.
+
+Note: In Spring Boot, JSON serialization and deserialization are often handled automatically by the framework based on the content type requested or sent in the HTTP requests and responses. The Object Mapper can be used when you need more fine-grained control or in specific scenarios where custom serialization or deserialization is required.

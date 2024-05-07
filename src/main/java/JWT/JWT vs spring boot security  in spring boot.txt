@@ -1,0 +1,13 @@
+JWT (JSON Web Token) and Spring Security are two different concepts that can be used together in a Spring Boot application to implement authentication and authorization.
+
+1. **JWT**: JWT is a standard for securely transmitting information between parties as a JSON object. It is commonly used for authentication purposes in web applications. A JWT consists of three parts: a header, a payload, and a signature. The header contains information about the algorithm used to generate the signature, the payload contains the claims or information about the user, and the signature is used to verify the authenticity of the token.
+
+   JWT is stateless, meaning the server does not need to store any session information. The server can verify the token's signature and extract information directly from the token. JWTs are typically used in stateless, distributed systems, where the server does not maintain any session state.
+
+2. **Spring Security**: Spring Security is a powerful authentication and authorization framework for Java applications, including Spring Boot applications. It provides a comprehensive set of features for securing your application, such as user authentication, role-based access control, and various attack prevention mechanisms.
+
+   Spring Security offers a flexible and configurable approach to handle authentication and authorization. It supports various authentication mechanisms like form-based authentication, OAuth, and JWT. Spring Security allows you to define security configurations, rules, and filters to protect your application's endpoints and resources.
+
+   Spring Security can be integrated with JWT to provide token-based authentication. You can configure Spring Security to validate and process JWT tokens, extract user information from the token, and perform authorization based on the token's claims.
+
+In summary, JWT is a token-based authentication mechanism that can be used in conjunction with Spring Security. Spring Security provides a comprehensive framework for handling authentication and authorization in a Spring Boot application, and JWT can be one of the authentication mechanisms supported by Spring Security. JWT provides a stateless approach to authentication, while Spring Security offers a broader set of features for securing your application.

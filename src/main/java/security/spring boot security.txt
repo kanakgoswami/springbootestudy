@@ -1,0 +1,55 @@
+Spring Boot provides seamless integration with Spring Security, making it easy to secure your Spring Boot applications. Spring Boot Security builds on top of the core Spring Security framework and provides additional auto-configuration and opinionated defaults to simplify security configuration. Here's an overview of using Spring Boot Security:
+
+1. **Add Spring Boot Security Dependency**: In your `pom.xml` (for Maven) or `build.gradle` (for Gradle), include the Spring Boot Security dependency:
+
+   ```xml
+   <!-- Maven -->
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-security</artifactId>
+   </dependency>
+   ```
+
+2. **Configure Security Rules**: Spring Boot Security provides sensible defaults, but you can customize the security configuration based on your application's needs. You can create a security configuration class that extends `WebSecurityConfigurerAdapter` and overrides its methods to define your security rules. For example:
+
+   ```java
+   import org.springframework.context.annotation.Configuration;
+   import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+   import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+   import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+   @Configuration
+   @EnableWebSecurity
+   public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+       @Override
+       protected void configure(HttpSecurity http) throws Exception {
+           http
+               .authorizeRequests()
+                   .antMatchers("/public").permitAll()
+                   .antMatchers("/admin").hasRole("ADMIN")
+                   .anyRequest().authenticated()
+                   .and()
+               .formLogin()
+                   .loginPage("/login")
+                   .permitAll()
+                   .and()
+               .logout()
+                   .permitAll();
+       }
+   }
+   ```
+
+   In this example, the `configure(HttpSecurity http)` method defines security rules such as allowing access to `/public` for all, requiring the `/admin` endpoint to have the "ADMIN" role, and enabling form-based login with a custom login page.
+
+3. **User Authentication**: By default, Spring Security uses in-memory authentication with a generated password. You can provide a custom `UserDetailsService` bean to load user details from a database or external service. You can also configure password encoding and customize authentication providers as needed.
+
+4. **Securing Endpoints**: You can secure individual endpoints or entire URL patterns by using `@Secured`, `@PreAuthorize`, or other annotations provided by Spring Security. These annotations allow you to specify the required roles or permissions for accessing specific methods.
+
+5. **Customize Access Denied Handling**: You can customize the behavior when access is denied by implementing `AccessDeniedHandler` and registering it in your security configuration.
+
+6. **Enable CSRF Protection**: Spring Boot Security enables CSRF protection by default. It automatically adds a CSRF token to forms and handles validation of the token on form submission. You can customize CSRF configuration if needed.
+
+7. **Actuator Security**: Spring Boot Actuator provides endpoints for monitoring and managing your application. By default, these endpoints are secured with basic authentication. You can customize the security configuration for Actuator endpoints separately.
+
+These are just some of the key aspects of securing a Spring Boot application using Spring Boot Security. Spring Boot's auto-configuration and opinionated defaults make it easier to set up and configure security in your applications, while still allowing for customization to meet specific requirements.

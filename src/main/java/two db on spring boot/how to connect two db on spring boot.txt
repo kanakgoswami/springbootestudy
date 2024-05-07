@@ -1,0 +1,94 @@
+how to connect two db on spring boot
+To connect two databases in a Spring Boot application, you can follow these steps:
+
+1. Configure the database connections: In the `application.properties` or `application.yml` file, define the connection properties for both databases. You need to specify different properties for each database, including the URL, username, password, and driver class.
+
+   Here's an example of configuring two databases:
+
+   ```properties
+   # Database 1
+   spring.datasource.url=jdbc:mysql://localhost:3306/db1
+   spring.datasource.username=db1user
+   spring.datasource.password=db1pass
+   spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+
+   # Database 2
+   spring.datasource.db2.url=jdbc:mysql://localhost:3306/db2
+   spring.datasource.db2.username=db2user
+   spring.datasource.db2.password=db2pass
+   spring.datasource.db2.driver-class-name=com.mysql.jdbc.Driver
+   ```
+
+2. Create DataSource beans: In your Spring Boot configuration class, define two DataSource beans, one for each database connection. You can use the `@Configuration` and `@Bean` annotations for this.
+
+   ```java
+   import org.springframework.beans.factory.annotation.Qualifier;
+   import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+   import org.springframework.boot.context.properties.ConfigurationProperties;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+   import org.springframework.context.annotation.Primary;
+
+   import javax.sql.DataSource;
+
+   @Configuration
+   public class DatabaseConfig {
+       
+       @Bean
+       @Primary
+       @ConfigurationProperties(prefix = "spring.datasource")
+       public DataSource primaryDataSource() {
+           return DataSourceBuilder.create().build();
+       }
+
+       @Bean
+       @ConfigurationProperties(prefix = "spring.datasource.db2")
+       public DataSource secondaryDataSource() {
+           return DataSourceBuilder.create().build();
+       }
+   }
+   ```
+
+   In this example, `primaryDataSource()` is annotated with `@Primary`, indicating that it is the default database connection if no other qualifier is specified. `secondaryDataSource()` creates the bean for the second database.
+
+3. Configure JPA for each database: If you're using JPA (Java Persistence API) for database operations, you need to configure the EntityManagerFactory for each database. You can create two EntityManagerFactory beans, one for each DataSource.
+
+   ```java
+   import javax.persistence.EntityManagerFactory;
+   import javax.sql.DataSource;
+
+   import org.springframework.beans.factory.annotation.Qualifier;
+   import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+   import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+   import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+
+   @Configuration
+   public class JpaConfig {
+
+       @Bean
+       public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(
+               EntityManagerFactoryBuilder builder, @Qualifier("primaryDataSource") DataSource dataSource) {
+           return builder
+                   .dataSource(dataSource)
+                   .packages("com.example.model.db1") // Package name for entities in the first database
+                   .persistenceUnit("db1")
+                   .build();
+       }
+
+       @Bean
+       public LocalContainerEntityManagerFactoryBean secondaryEntityManagerFactory(
+               EntityManagerFactoryBuilder builder, @Qualifier("secondaryDataSource") DataSource dataSource) {
+           return builder
+                   .dataSource(dataSource)
+                   .packages("com.example.model.db2") // Package name for entities in the second database
+                   .persistenceUnit("db2")
+                   .build();
+       }
+   }
+   ```
+
+   In this example, `primaryEntityManagerFactory()` and `secondaryEntityManagerFactory()` create the EntityManagerFactory beans for the respective databases. Make sure to replace the package names with the actual package names where your entity classes are located.
+
+4. Use the multiple databases in your application

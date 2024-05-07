@@ -1,0 +1,43 @@
+Spring Bootstap
+1. @SpringBootApplication - Combination of @SpringBootConfiguration, @EnableAutoConfiguration, @ConfigurationPropertiesScan and @ComponentScan
+
+	@SpringBootConfiguration: It indicates that the class declares one or more Spring Beans. Spring Beans are managed components within the Spring 	container.
+
+	@EnableAutoConfiguration: It enables Spring Boot's auto-configuration mechanism. Auto-configuration automatically configures the Spring application 	based on the dependencies present in the classpath. It saves you from writing a lot of boilerplate configuration code.
+
+	@ComponentScan: It enables component scanning. Component scanning scans the specified packages and registers the Spring components (such as 	controllers, services, repositories, etc.) within the application context.
+
+@Configuration - Marks annotated class as a Java configuration defining beans.
+
+@Component - Marks annotated class as a bean found by the component-scanning and loaded into the application context
+
+@ComponentScan - Configures component scanning or searching @Compenent, @Service.
+
+@Controller - Marks annotated class as a bean for Spring MVC containing request handler.
+
+@RestController - Marks annotated class as a @Controller bean and adds @ResponseBody to serialize returned results as messages.
+
+@ResponseBody annotations are used to bind the HTTP request/response body with a domain object in the method parameter or return type.
+
+@ResponseBody annotation tells a controller that the object returned is automatically serialized into JSON and passed back into the HttpResponse object.
+
+@ResponseEntity represents an HTTP response, including headers, body, and status.
+
+@Service - Marks annotated class as a bean (as convention usually containing business logic).
+
+@Repository - Marks annotated class as a bean (as convention usually providing data access) and adds auto-translation from SQLException to DataAccessExceptions.
+
+@Bean - Annotated method produces a bean managed by the Spring IoC container
+@Bean is just for the metadata definition to create the managed bean(equivalent to tag).
+
+@Autowired - Beans are automatic injected.  into annotated setters, fields, or constructor params.
+@Autowired annotation is used for automatic dependency injection. Spring framework is built on dependency injection and we inject the class dependencies through spring bean configuration file.
+
+@Qualifier - Specifies the name of a bean as an additional condition to identify a unique candidate for autowiring
+The @Qualifier annotation in Spring is used to differentiate a bean among the same type of bean objects.
+
+@EnableAsync annotation switches on Spring's ability to run @Async methods in a background thread pool.
+
+@ControllerAdvice is a specialized form of the spring's stereotype annotation which allows handling exceptions across the whole application in one global handling component. Think of this as an interceptor of exceptions thrown by methods annotated with @RequestMapping.
+
+@ExceptionHandler is an annotation used to handle the specific exceptions and sending the custom responses to the client. Define a class that extends the RuntimeException class. You can define the @ExceptionHandler method to handle the exceptions as shown.

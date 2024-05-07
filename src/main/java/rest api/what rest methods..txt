@@ -1,0 +1,15 @@
+REST defines a set of standard HTTP methods (also known as verbs or CRUD operations) that correspond to different actions performed on resources. These methods are used to interact with resources in a RESTful API. The commonly used REST methods are:
+
+1. GET: The GET method is used to retrieve a representation of a resource or a collection of resources. It should be a safe and idempotent operation, meaning that multiple identical GET requests should have the same result and should not modify the state of the server.
+
+2. POST: The POST method is used to create a new resource. It submits data to be processed by the server and results in the creation of a new resource on the server. The response typically includes the URL or identifier of the newly created resource.
+
+3. PUT: The PUT method is used to update or replace an existing resource. It sends the complete representation of the resource to the server. If the resource already exists, it will be updated with the new representation. If it doesn't exist, a new resource will be created with the given representation.
+
+4. DELETE: The DELETE method is used to delete a specific resource. It removes the resource from the server. After successful deletion, the server should respond with a status code indicating the success of the operation.
+
+5. PATCH: The PATCH method is used to perform a partial update on a resource. It sends only the changes that need to be applied to the existing resource, rather than sending the complete representation of the resource. The server applies the provided changes to the resource.
+
+These REST methods map to the CRUD (Create, Read, Update, Delete) operations commonly used in data manipulation. They provide a standardized way of interacting with resources in a RESTful API and allow for a uniform and consistent approach to resource management.
+
+It's important to note that these methods are defined by the HTTP protocol, and their usage in a RESTful API adheres to the principles of the REST architectural style. By using these methods appropriately, you can design a well-structured and intuitive API that follows RESTful principles.

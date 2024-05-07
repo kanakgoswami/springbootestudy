@@ -1,0 +1,39 @@
+what is depdency injection
+what are way two achive depenecy (setter and constructor)
+actutor(2)
+AOP(2)
+rest api method
+what rest methods or what is rest components 
+Automatic configure how works spring boot
+how to connect two db in spring boot
+spring trasaction
+maximum data/Transaction have you deal in context of
+security on database data in microservice with spring boot
+JWT(2)
+Write a Controller spring boot.
+What are the components that come in Controller spring boot.
+need of spring boot,
+why Spring vs Spring boot 
+how check Spring boot rest api health 
+spring security
+dependency injection (DI) management is handled by the Spring boot Framework
+Profile  in spring boot senarios
+propertise vs yaml
+How to create custom annotation? and uses of it.
+
+spring boot annotations.
+@springbootapplication (3)
+@EnableAutoConfiguration
+@configuration
+@restcontroller
+@controller
+@advisecontroller
+@exceptionhandller
+@component
+@service
+@repository
+@configuration
+@async
+@controlleradvise
+@autowire
+@bean

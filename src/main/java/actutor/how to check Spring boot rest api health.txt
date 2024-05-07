@@ -1,0 +1,28 @@
+In Spring Boot, you can check the health of a REST API using the Actuator module. The Actuator module provides a set of endpoints that expose various operational information and management capabilities of the application, including health checks.
+
+To enable the Actuator module in your Spring Boot application, you need to include the `spring-boot-starter-actuator` dependency in your project's build configuration file (e.g., Maven or Gradle).
+
+Once the Actuator is enabled, you can check the health of your REST API by making a request to the `/actuator/health` endpoint. By default, this endpoint provides basic health information about the application, such as whether it's up and running.
+
+Here's an example of checking the health of a Spring Boot REST API:
+
+1. Start your Spring Boot application that has Actuator enabled.
+
+2. Open a web browser or use a tool like cURL or Postman to make a GET request to the health endpoint:
+
+   ```
+   GET http://localhost:8080/actuator/health
+   ```
+
+   Replace `http://localhost:8080` with the appropriate URL of your running application.
+
+3. You should receive a response with the health information of your REST API, which can be one of the following:
+
+   - `{"status":"UP"}`: Indicates that the application is up and running without any reported problems.
+   - `{"status":"DOWN"}`: Indicates that the application is currently down or experiencing issues. Additional details may be provided in the response.
+
+The `/actuator/health` endpoint also provides more detailed health information when additional health checks are configured in your application. You can customize and extend the health checks by implementing custom health indicators or using third-party health check libraries.
+
+Additionally, the Actuator module provides several other endpoints that expose various operational and management information, such as `/actuator/info` for application information, `/actuator/metrics` for metrics, and more. You can explore these endpoints to gather more insights about your Spring Boot application.
+
+Note: It's important to secure the Actuator endpoints in a production environment to prevent unauthorized access to sensitive information.

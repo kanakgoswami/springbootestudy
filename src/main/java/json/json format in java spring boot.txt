@@ -1,0 +1,74 @@
+In Java Spring Boot, you can work with JSON using various libraries and annotations provided by Spring. Here's an example of working with JSON format in Java Spring Boot:
+
+1. Add Dependencies:
+   Make sure you have the necessary dependencies in your `pom.xml` file. You will need the following dependencies for JSON support:
+
+   ```xml
+   <dependencies>
+       <!-- Other dependencies -->
+       <dependency>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-web</artifactId>
+       </dependency>
+       <dependency>
+           <groupId>com.fasterxml.jackson.core</groupId>
+           <artifactId>jackson-databind</artifactId>
+       </dependency>
+   </dependencies>
+   ```
+
+2. Create a Model:
+   Define a model class to represent your JSON data. For example, let's create a simple model called `Person`:
+
+   ```java
+   public class Person {
+       private String name;
+       private int age;
+   
+       // Getters and Setters
+   
+       // Constructors
+   }
+   ```
+
+3. JSON Serialization/Deserialization:
+   By default, Spring Boot uses the Jackson library for JSON serialization and deserialization. To automatically serialize and deserialize JSON, you can use annotations.
+
+   ```java
+   import org.springframework.web.bind.annotation.*;
+   
+   @RestController
+   public class PersonController {
+   
+       @PostMapping("/person")
+       public String createPerson(@RequestBody Person person) {
+           // Process the received JSON data
+           return "Person created: " + person.getName();
+       }
+   }
+   ```
+
+   In the above example, the `@RestController` annotation indicates that this class will handle REST requests. The `@PostMapping` annotation specifies the URL endpoint for the HTTP POST method. The `@RequestBody` annotation tells Spring to deserialize the JSON data from the request body into a `Person` object.
+
+4. JSON Response:
+   To return JSON responses from your Spring Boot application, you can use the `@ResponseBody` annotation on a method. Spring will automatically convert the returned object to JSON.
+
+   ```java
+   @RestController
+   public class PersonController {
+   
+       @GetMapping("/person/{id}")
+       public ResponseEntity<Person> getPerson(@PathVariable("id") int id) {
+           Person person = // Get person from database using id
+           if (person != null) {
+               return ResponseEntity.ok(person);
+           } else {
+               return ResponseEntity.notFound().build();
+           }
+       }
+   }
+   ```
+
+   In this example, the `@GetMapping` annotation specifies the URL endpoint for the HTTP GET method. The `@PathVariable` annotation extracts the `id` value from the URL path. The `ResponseEntity` class allows you to set the response status and body.
+
+These are the basic steps to work with JSON in a Java Spring Boot application. You can further customize the serialization and deserialization process, handle validation, and perform other operations based on your application's requirements.

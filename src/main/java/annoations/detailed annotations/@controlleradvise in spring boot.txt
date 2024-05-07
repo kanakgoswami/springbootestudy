@@ -1,0 +1,49 @@
+`@ControllerAdvice` is an annotation in the Spring Boot framework that allows you to centralize exception handling and apply it across multiple controllers in your application. It is commonly used to handle exceptions, apply global exception handling logic, and provide centralized error responses.
+
+Here's how you can use `@ControllerAdvice` in Spring Boot:
+
+1. Create an Exception Handler Class: Create a new class and annotate it with `@ControllerAdvice`. This class will handle exceptions thrown by controllers in your application.
+
+```java
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    // Exception handling methods
+
+}
+```
+
+2. Define Exception Handling Methods: Inside the `GlobalExceptionHandler` class, you can define methods annotated with `@ExceptionHandler` to handle specific exceptions or a general `Exception` type. These methods will be invoked when an exception of the specified type is thrown by any controller in your application.
+
+```java
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Resource not found", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Internal Server Error", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Other exception handling methods
+
+}
+```
+
+In this example, the `handleResourceNotFoundException` method handles the `ResourceNotFoundException` and returns a custom `ErrorResponse` object with a corresponding HTTP status code. The `handleException` method is a fallback handler for any other unhandled exceptions.
+
+3. Customize Error Responses: You can create a custom response object, such as `ErrorResponse` in the above example, to encapsulate the error details you want to return to the client. This object can contain fields like an error message, error code, timestamp, etc., based on your application's requirements.
+
+4. Apply Global Exception Handling: With `@ControllerAdvice`, the exception handling logic defined in the `GlobalExceptionHandler` class will be applied globally to all controllers in your application. If an exception occurs within any controller method, Spring Boot will automatically route the exception to the appropriate exception handling method within the `GlobalExceptionHandler` class based on the exception type.
+
+By using `@ControllerAdvice`, you can centralize exception handling, avoid duplicating error handling code across multiple controllers, and provide consistent error responses throughout your application.
+
+Additionally, you can also use other annotations like `@ModelAttribute`, `@InitBinder`, and `@ResponseBody` within `@ControllerAdvice` to perform additional tasks such as manipulating model attributes, registering custom property editors, or customizing the response body.
+
+Remember to consult the official Spring Boot documentation for more details on `@ControllerAdvice` and related annotations to fully understand the capabilities and best practices of exception handling in Spring Boot.@controlleradvise in spring boot

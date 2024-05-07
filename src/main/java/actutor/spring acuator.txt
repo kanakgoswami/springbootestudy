@@ -1,0 +1,52 @@
+Spring Actuator is a module in the Spring Boot framework that provides production-ready features to monitor and manage your application in runtime. It offers various endpoints and features to gather insights into the application's health, metrics, configuration, and more.
+
+To use Spring Actuator in your Spring Boot application, follow these steps:
+
+Step 1: Add Dependency
+In your Maven or Gradle build file, include the Spring Boot Actuator dependency:
+
+For Maven:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+For Gradle:
+```groovy
+implementation 'org.springframework.boot:spring-boot-starter-actuator'
+```
+
+Step 2: Enable Actuator
+By default, Spring Boot Actuator is auto-configured when you include the actuator dependency. However, if you need to customize the configuration, you can enable Actuator explicitly by adding the `@EnableActuator` annotation in your Spring Boot application's main class:
+
+```java
+@SpringBootApplication
+@EnableActuator
+public class YourApplication {
+    //...
+}
+```
+
+Step 3: Access Actuator Endpoints
+With Spring Actuator enabled, your application exposes various endpoints that provide insights and management capabilities. These endpoints are accessible over HTTP.
+
+Commonly used Actuator endpoints include:
+
+- `/actuator/health`: Provides information about the application's health status.
+- `/actuator/info`: Provides custom information about the application.
+- `/actuator/metrics`: Exposes various application metrics, such as JVM memory usage, HTTP request counts, and more.
+- `/actuator/env`: Exposes the current environment properties and their values.
+- `/actuator/loggers`: Allows you to view and configure logging levels for different loggers in the application.
+
+You can access these endpoints by appending them to your application's base URL. For example, if your application is running on `http://localhost:8080`, you can access the health endpoint at `http://localhost:8080/actuator/health`.
+
+Step 4: Secure Actuator Endpoints (Optional)
+By default, Actuator endpoints are not secured, meaning they can be accessed without authentication. However, in a production environment, you may want to secure these endpoints.
+
+You can configure security for Actuator endpoints by modifying the Spring Security configuration in your application. For example, you can restrict access to Actuator endpoints to specific roles or require authentication.
+
+To secure Actuator endpoints, you need to configure Spring Security accordingly. You can refer to the Spring Security documentation or Spring Boot documentation for more information on securing Actuator endpoints.
+
+That's it! You have now integrated and enabled Spring Actuator in your Spring Boot application. You can explore the various Actuator endpoints to monitor and manage your application in runtime.

@@ -1,0 +1,198 @@
+JWT (JSON Web Token) is a widely used standard for securely transmitting information between parties as a JSON object. It is commonly used for authentication and authorization purposes in web applications. In Spring Boot, you can easily integrate JWT-based authentication using libraries like Spring Security and jjwt. Here's an overview of how to implement JWT in a Spring Boot application:
+
+1. **Add Dependencies**: Include the necessary dependencies in your Maven or Gradle build file:
+
+   ```xml
+   <!-- For Spring Security -->
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-starter-security</artifactId>
+   </dependency>
+
+   <!-- For JWT -->
+   <dependency>
+       <groupId>io.jsonwebtoken</groupId>
+       <artifactId>jjwt-api</artifactId>
+       <version>0.11.2</version>
+   </dependency>
+   <dependency>
+       <groupId>io.jsonwebtoken</groupId>
+       <artifactId>jjwt-impl</artifactId>
+       <version>0.11.2</version>
+       <scope>runtime</scope>
+   </dependency>
+   <dependency>
+       <groupId>io.jsonwebtoken</groupId>
+       <artifactId>jjwt-jackson</artifactId>
+       <version>0.11.2</version>
+       <scope>runtime</scope>
+   </dependency>
+   ```
+
+2. **Configure Spring Security**: Configure Spring Security to enable JWT-based authentication. You can create a class that extends `WebSecurityConfigurerAdapter` and override the `configure` method to customize security settings:
+
+   ```java
+   @Configuration
+   @EnableWebSecurity
+   public class SecurityConfig extends WebSecurityConfigurerAdapter {
+   
+       @Override
+       protected void configure(HttpSecurity http) throws Exception {
+           http.csrf().disable()
+               .authorizeRequests()
+               .antMatchers("/api/public").permitAll()
+               .anyRequest().authenticated()
+               .and()
+               .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+               .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+       }
+   
+       // Other necessary configurations
+   
+   }
+   ```
+
+   In the above example, we permit access to `/api/public` without authentication, while all other requests require authentication. We also add a `JwtAuthenticationFilter` to handle JWT-based authentication.
+
+3. **Implement Authentication and Authorization Logic**: Create the necessary classes to handle authentication and authorization. This includes a `UserDetailsService` implementation to load user details from a database or other data source, and a `JwtAuthenticationFilter` to validate and process JWT tokens:
+
+   ```java
+   @Service
+   public class UserDetailsServiceImpl implements UserDetailsService {
+   
+       @Autowired
+       private UserRepository userRepository;
+   
+       @Override
+       public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+           User user = userRepository.findByUsername(username)
+               .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+   
+           return new org.springframework.security.core.userdetails.User(
+               user.getUsername(),
+               user.getPassword(),
+               new ArrayList<>()
+           );
+       }
+   }
+   ```
+
+   ```java
+   public class JwtAuthenticationFilter extends OncePerRequestFilter {
+   
+       @Autowired
+       private JwtTokenProvider tokenProvider;
+   
+       @Autowired
+       private UserDetailsService userDetailsService;
+   
+       @Override
+       protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+               throws ServletException, IOException {
+           String token = getTokenFromRequest(request);
+   
+           if (token != null && tokenProvider.validateToken(token)) {
+               Authentication auth = tokenProvider.getAuthentication(token);
+               SecurityContextHolder.getContext().setAuthentication(auth);
+           }
+   
+           chain.doFilter(request, response);
+       }
+   
+       private String getTokenFromRequest(HttpServletRequest
+
+ request) {
+           String bearerToken = request.getHeader("Authorization");
+           if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+               return bearerToken.substring(7);
+           }
+           return null;
+       }
+   }
+   ```
+
+   In the `JwtAuthenticationFilter`, you can customize the token extraction logic and validation based on your requirements.
+
+4. **Generate and Validate JWT Tokens**: Implement a JWT token provider class that generates and validates JWT tokens:
+
+   ```java
+   @Component
+   public class JwtTokenProvider {
+   
+       @Value("${jwt.secret}")
+       private String secretKey;
+   
+       public String generateToken(Authentication authentication) {
+           Date now = new Date();
+           Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+   
+           return Jwts.builder()
+               .setSubject(authentication.getName())
+               .setIssuedAt(new Date())
+               .setExpiration(expiryDate)
+               .signWith(SignatureAlgorithm.HS512, secretKey)
+               .compact();
+       }
+   
+       public boolean validateToken(String token) {
+           try {
+               Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+               return true;
+           } catch (SignatureException ex) {
+               // Invalid JWT signature
+           } catch (MalformedJwtException ex) {
+               // Invalid JWT format
+           } catch (ExpiredJwtException ex) {
+               // Expired JWT token
+           } catch (UnsupportedJwtException ex) {
+               // Unsupported JWT token
+           } catch (IllegalArgumentException ex) {
+               // JWT claims string is empty
+           }
+           return false;
+       }
+   
+       public Authentication getAuthentication(String token) {
+           UserDetails userDetails = userDetailsService.loadUserByUsername(getUsernameFromToken(token));
+           return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+       }
+   
+       private String getUsernameFromToken(String token) {
+           return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+       }
+   }
+   ```
+
+   The above code demonstrates how to generate a token with an expiration date, sign it using a secret key, and validate the token for authentication.
+
+5. **Use JWT in Controllers**: Use JWT-based authentication in your controllers by generating and returning a JWT token upon successful authentication. You can use the `AuthenticationManager` to authenticate users:
+
+   ```java
+   @RestController
+   public class AuthController {
+   
+       @Autowired
+       private AuthenticationManager authenticationManager;
+   
+       @Autowired
+       private JwtTokenProvider tokenProvider;
+   
+       @PostMapping("/api/login")
+       public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+           Authentication authentication = authenticationManager.authenticate(
+               new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+   
+           SecurityContextHolder.getContext().setAuthentication(authentication);
+   
+           String token = tokenProvider.generateToken(authentication);
+           return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+       }
+   
+       // Other endpoints
+   
+   }
+   ```
+
+   The `authenticateUser` method authenticates the user using the provided credentials and returns a JWT token in the response.
+
+These are the basic steps to implement JWT-based authentication in a Spring Boot application. You can further customize and extend the implementation based on your specific requirements, such as adding role-based authorization, handling token expiration, and integrating with user databases.

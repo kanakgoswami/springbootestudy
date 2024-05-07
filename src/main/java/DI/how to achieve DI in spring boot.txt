@@ -1,0 +1,41 @@
+Dependency Injection (DI) is a fundamental concept in Spring Boot that allows you to inject dependencies into your classes rather than creating them manually. Here's how you can achieve DI in Spring Boot:
+
+1. **Identify Dependencies**: Determine the dependencies that your class needs. These can be other classes, interfaces, or even configuration properties.
+
+2. **Annotate Dependencies**: Use the appropriate annotation to indicate that a field, constructor, or setter method should be injected with the dependency. The commonly used annotations are:
+
+   - `@Autowired`: This annotation is used for automatic dependency injection. It can be applied to fields, constructors, or setter methods. Spring Boot will automatically identify the dependencies and inject them.
+
+   - `@Inject`: This annotation is an alternative to `@Autowired` and works similarly. It is part of the Java Dependency Injection (JSR-330) standard.
+
+3. **Create Beans**: Ensure that the dependencies are defined as beans within the Spring context. Beans can be defined using various annotations like `@Component`, `@Service`, `@Repository`, or through XML configuration.
+
+   - `@Component`: This annotation is a generic stereotype for any Spring-managed bean.
+   - `@Service`: This annotation is used to define a service bean.
+   - `@Repository`: This annotation is used to define a repository or data access bean.
+   - `@Configuration`: This annotation is used to define a configuration bean.
+
+4. **Enable Component Scanning**: Make sure that the package containing your beans is scanned by Spring Boot for component detection. By default, Spring Boot scans the package of the main application class and its sub-packages. You can also customize component scanning using `@ComponentScan` annotation.
+
+5. **Run and Test**: Run your Spring Boot application and verify that the dependencies are injected correctly. Spring Boot will automatically handle the dependency injection and instantiate the required dependencies for you.
+
+Example:
+
+```java
+@Service
+public class MyService {
+
+    private final MyRepository myRepository;
+
+    @Autowired
+    public MyService(MyRepository myRepository) {
+        this.myRepository = myRepository;
+    }
+
+    // Use myRepository in service methods
+}
+```
+
+In the above example, the `MyService` class has a dependency on `MyRepository`, which is annotated with `@Autowired` in the constructor. When an instance of `MyService` is created, Spring Boot will automatically inject an instance of `MyRepository` into it.
+
+By following these steps, you can achieve Dependency Injection in Spring Boot and take advantage of its powerful inversion of control (IoC) container to manage and inject dependencies for your application classes.
